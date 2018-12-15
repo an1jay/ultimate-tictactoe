@@ -6,9 +6,10 @@ import "fmt"
 type Square uint8
 
 const (
-	numSquaresInSubBoard = 9
-	numSubBoardsInBoard  = 9
-	numSquaresInBoard    = 81
+	numSquaresInSubBoard    int = 9
+	numSubBoardsInBoard     int = 9
+	numSquaresInBoard       int = 81
+	numSquaresInSubBoardRow int = 27
 )
 
 // Enumeratign through the Squares on the board.
