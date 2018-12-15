@@ -6,16 +6,11 @@ import (
 )
 
 func main() {
-	// fmt.Println("Ultimate ")
+	sq := Square(0)
+}
 
-	// x := Square(76)
-	// fmt.Printf("%v", x)
-	// b := BitBoard{0, 0, 0}
-	// _ = b.UpdateSubboardWins()
-
-	makeBBFromString("11111111100000000000000000000000")
-	makeBBFromString("00000000011111111100000000000000")
-	makeBBFromString("00000000000000000011111111100000")
+func strSquare(a Square) string {
+	return a.String()
 }
 
 func makeBBFromString(str string) {
@@ -33,4 +28,31 @@ func calcWinConditions() {
 	makeBBFromString("00100100100000000000000000000000")
 	makeBBFromString("10001000100000000000000000000000")
 	makeBBFromString("00101010000000000000000000000000")
+}
+
+func testBBUpdateSubboardWins() {
+	b := BitBoard{1224736768, 469762048 >> 9, 1224736768 >> 18}
+	fmt.Println("Before")
+	b.PrintRowsAsBits()
+	b.UpdateSubBoardWins()
+
+	fmt.Println("After")
+	b.PrintRowsAsBits()
+}
+func testBBWin() {
+	b := BitBoard{1224736768, 469762048 >> 9, 1224736768 >> 18}
+	fmt.Println(b.Win())
+}
+func testBBMove() {
+	b := BitBoard{1224736768, 469762048 >> 9, 1224736768 >> 18}
+	fmt.Println("Before: ")
+	b.PrintRowsAsBits()
+	b.Move(Square(12))
+	fmt.Println("After: ")
+	b.PrintRowsAsBits()
+}
+
+func testBBDisplay() {
+	b := BitBoard{1224736768, 469762048 >> 9, 1224736768 >> 18}
+	b.Display()
 }

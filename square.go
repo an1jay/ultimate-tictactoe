@@ -7,12 +7,48 @@ type Square uint8
 
 const (
 	numSquaresInSubBoard    int = 9
-	numSubBoardsInBoard     int = 9
 	numSquaresInBoard       int = 81
 	numSquaresInSubBoardRow int = 27
+
+	numSubBoardsInBoard       int = 9
+	numSubBoardsInSubBoardRow int = 3
+	numSubBoardRowsInBoard    int = 3
 )
 
-// Enumeratign through the Squares on the board.
+// String returns a string representation of a square.
+// DOES NOT (investigate?) Implements the fmt.Stringer() interface.
+func (sq Square) String() string {
+	//fmt.Printf("%d", int(sq)/numSubBoardsInBoard)
+	//fmt.Printf("%d", int(sq)/numSquaresInSubBoard)
+	return fmt.Sprintf("B%dS%d", int(sq)/numSubBoardsInBoard, int(sq)%numSquaresInSubBoard)
+}
+
+// SubBoard returns the subboard that a square is on
+func (sq Square) SubBoard() SubBoard {
+	sb := int(sq) / numSquaresInSubBoard
+	switch sb {
+	case 0:
+		return SubBoard0
+	case 1:
+		return SubBoard1
+	case 2:
+		return SubBoard2
+	case 3:
+		return SubBoard3
+	case 4:
+		return SubBoard4
+	case 5:
+		return SubBoard5
+	case 6:
+		return SubBoard6
+	case 7:
+		return SubBoard7
+	case 8:
+		return SubBoard8
+	}
+}
+
+// Enumerating through the Squares on the board.
 // e.g. B0S0 is the zeroth square of the zeroth subboard.
 const (
 	B0S0 Square = iota
@@ -105,11 +141,3 @@ const (
 	B8S7
 	B8S8
 )
-
-// String returns a string representation of a square.
-// Implements the fmt.Stringer() interface.
-func (sq Square) String() string {
-	//fmt.Printf("%d", int(sq)/numSubBoardsInBoard)
-	//fmt.Printf("%d", int(sq)/numSquaresInSubBoard)
-	return fmt.Sprintf("B%dS%d", int(sq)/numSubBoardsInBoard, int(sq)%numSquaresInSubBoard)
-}
