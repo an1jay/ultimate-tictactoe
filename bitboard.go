@@ -64,7 +64,7 @@ func (b *BitBoard) Mapping() map[Square]bool {
 
 // UpdateSubBoardWins returns a pointer to a BitBoard with the subboard wins updated
 func (b *BitBoard) UpdateSubBoardWins() {
-	subBoardRows := [3]uint32{}
+	subBoardRows := [3]uint32{b.zeroth, b.first, b.second}
 	// looping through subboardrows
 	for rowNo, subBoardRow := range []uint32{b.zeroth, b.first, b.second} {
 		// looping through subboard
@@ -105,6 +105,51 @@ func (b *BitBoard) Win() bool {
 	// check win on bigBoard
 	for _, wc := range WinConditions {
 		if bigBoard&wc != 0 {
+			return true
+		}
+	}
+	return false
+}
+
+// SubBoardWin returns bool for whether the SubBoard is won or not.
+// NoSubBoard always returns false
+func (b *BitBoard) SubBoardWin(sb SubBoard) bool {
+	b.UpdateSubBoardWins()
+	switch sb {
+	case SubBoard0:
+		if b.zeroth&(1<<2) != 0 {
+			return true
+		}
+	case SubBoard1:
+		if b.zeroth&(1<<1) != 0 {
+			return true
+		}
+	case SubBoard2:
+		if b.zeroth&(1<<0) != 0 {
+			return true
+		}
+	case SubBoard3:
+		if b.first&(1<<2) != 0 {
+			return true
+		}
+	case SubBoard4:
+		if b.first&(1<<1) != 0 {
+			return true
+		}
+	case SubBoard5:
+		if b.first&(1<<0) != 0 {
+			return true
+		}
+	case SubBoard6:
+		if b.second&(1<<2) != 0 {
+			return true
+		}
+	case SubBoard7:
+		if b.second&(1<<1) != 0 {
+			return true
+		}
+	case SubBoard8:
+		if b.second&(1<<0) != 0 {
 			return true
 		}
 	}
@@ -159,6 +204,17 @@ func (b *BitBoard) Occupied(sq Square) bool {
 		}
 	}
 	return false
+}
+
+// MoveCount returns number of occupied squares of a SubBoard
+func (b *BitBoard) MoveCount(sb SubBoard) uint8 {
+	var counter uint8
+	for _, sq := range sb.Squares() {
+		if b.Occupied(sq) {
+			counter++
+		}
+	}
+	return counter
 }
 
 // OccupiedChar return "1" if sq is occupied, otherwise "0".

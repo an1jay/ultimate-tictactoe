@@ -46,6 +46,7 @@ func (sq Square) SubBoard() SubBoard {
 	case 8:
 		return SubBoard8
 	}
+	return NoSubBoard
 }
 
 // Enumerating through the Squares on the board.

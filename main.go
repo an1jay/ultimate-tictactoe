@@ -6,7 +6,11 @@ import (
 )
 
 func main() {
-	sq := Square(0)
+
+	testBBUpdateSubboardWins()
+
+	testBBManyUpdateSubboardWins()
+
 }
 
 func strSquare(a Square) string {
@@ -39,6 +43,18 @@ func testBBUpdateSubboardWins() {
 	fmt.Println("After")
 	b.PrintRowsAsBits()
 }
+
+func testBBManyUpdateSubboardWins() {
+	b := BitBoard{1224736768, 469762048 >> 9, 1224736768 >> 18}
+	fmt.Println("Before")
+	b.PrintRowsAsBits()
+	b.UpdateSubBoardWins()
+	b.UpdateSubBoardWins()
+
+	fmt.Println("After")
+	b.PrintRowsAsBits()
+}
+
 func testBBWin() {
 	b := BitBoard{1224736768, 469762048 >> 9, 1224736768 >> 18}
 	fmt.Println(b.Win())
