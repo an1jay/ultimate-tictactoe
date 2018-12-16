@@ -1,4 +1,4 @@
-package main
+package game
 
 // SubBoard represents one of the 9 3*3 boards which comprise an Ultimate Tic Tac Toe board.
 type SubBoard uint8
@@ -16,6 +16,30 @@ const (
 	SubBoard7
 	SubBoard8
 )
+
+func (sb SubBoard) String() string {
+	switch sb {
+	case SubBoard0:
+		return "SubBoard 0"
+	case SubBoard1:
+		return "SubBoard 1"
+	case SubBoard2:
+		return "SubBoard 2"
+	case SubBoard3:
+		return "SubBoard 3"
+	case SubBoard4:
+		return "SubBoard 4"
+	case SubBoard5:
+		return "SubBoard 5"
+	case SubBoard6:
+		return "SubBoard 6"
+	case SubBoard7:
+		return "SubBoard 7"
+	case SubBoard8:
+		return "SubBoard 8"
+	}
+	return "No SubBoard"
+}
 
 // Squares returns a slice of all squares in SubBoard
 func (sb SubBoard) Squares() []Square {

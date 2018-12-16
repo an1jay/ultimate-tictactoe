@@ -1,4 +1,4 @@
-package main
+package game
 
 // Color encodes which player moves first and second.
 type Color uint8
@@ -19,4 +19,15 @@ func (c Color) Other() Color {
 		return White
 	}
 	return NoColor
+}
+
+// String returns a string reprsentation of c.
+func (c Color) String() string {
+	switch c {
+	case White:
+		return "White"
+	case Black:
+		return "Black"
+	}
+	return "NoColor"
 }

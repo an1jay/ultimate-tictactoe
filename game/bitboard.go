@@ -1,22 +1,23 @@
-package main
+package game
 
 import (
 	"fmt"
+	"math/bits"
 )
 
 // BitBoard encodes the positions of a side's moves
 // BitBoard.first  = 0  0  0  0  0  0  0  0  0 | 0  0  0  0  0  0  0  0  0 | 0  0  0  0  0  0  0  0  0 | 0  0 | 0  0  0
-//					 Zeroth sub-board          | First sub-board           | Second sub-board          |unused| sub-b wins (zeroth, first, second)
-// BitBoard.second = 0  0  0  0  0  0  0  0  0 | 0  0  0  0  0  0  0  0  0 | 0  0  0  0  0  0  0  0  0 | 0  0 | 0  0  0
+//					 Zeroth sub-board          | First sub-board           | Second sub-board          |unused| sub-b wins (Zeroth, first, Second)
+// BitBoard.Second = 0  0  0  0  0  0  0  0  0 | 0  0  0  0  0  0  0  0  0 | 0  0  0  0  0  0  0  0  0 | 0  0 | 0  0  0
 //					 Third sub-board           | Fourth sub-board          | Fifth sub-board           |unused| sub-b wins (third, fourth, fifth)
 // BitBoard.third  = 0  0  0  0  0  0  0  0  0 | 0  0  0  0  0  0  0  0  0 | 0  0  0  0  0  0  0  0  0 | 0  0 | 0  0  0
 //					 Sixth sub-board           | Seventh sub-board         | Eighth sub-board          |unused| sub-b wins (sixth, seventh, eighth)
 
 // BitBoard encodes the positions of a side's moves
 type BitBoard struct {
-	zeroth uint32
-	first  uint32
-	second uint32
+	Zeroth uint32
+	First  uint32
+	Second uint32
 }
 
 // WinConditions are all the win conditions for a sub board in the 9 most significant bits
@@ -45,11 +46,11 @@ func NewBitBoard(m map[Square]bool) BitBoard {
 			subboard := sq / numSquaresInSubBoardRow
 			switch subboard {
 			case 0:
-				bb.zeroth ^= 1 << uint(31-sq)
+				bb.Zeroth ^= 1 << uint(31-sq)
 			case 1:
-				bb.first ^= 1 << uint(31-(sq%numSquaresInSubBoardRow))
+				bb.First ^= 1 << uint(31-(sq%numSquaresInSubBoardRow))
 			case 2:
-				bb.second ^= 1 << uint(31-(sq%numSquaresInSubBoardRow))
+				bb.Second ^= 1 << uint(31-(sq%numSquaresInSubBoardRow))
 			}
 		}
 	}
@@ -64,9 +65,9 @@ func (b *BitBoard) Mapping() map[Square]bool {
 
 // UpdateSubBoardWins returns a pointer to a BitBoard with the subboard wins updated
 func (b *BitBoard) UpdateSubBoardWins() {
-	subBoardRows := [3]uint32{b.zeroth, b.first, b.second}
+	subBoardRows := [3]uint32{b.Zeroth, b.First, b.Second}
 	// looping through subboardrows
-	for rowNo, subBoardRow := range []uint32{b.zeroth, b.first, b.second} {
+	for rowNo, subBoardRow := range []uint32{b.Zeroth, b.First, b.Second} {
 		// looping through subboard
 		for n := 0; n < numSubBoardsInSubBoardRow; n++ {
 			// check if subboard already won -> no need to check win again
@@ -75,7 +76,8 @@ func (b *BitBoard) UpdateSubBoardWins() {
 				// subboard may be won - need to check every win condition on that
 				for _, wc := range WinConditions {
 					// checks if win condition wc is on the nth subboard in subboardRow
-					if (subBoardRow & subboardMasks[n] & (wc >> uint(n*numSquaresInSubBoard))) != 0 {
+					// need all squares in a wc to be occupied for win to occur -> 3 ones in the expression (i.e. in the wc squares)
+					if bits.OnesCount32(subBoardRow&subboardMasks[n]&(wc>>uint(n*numSquaresInSubBoard))) == 3 {
 						// then updates the corresponding sub-b win bit and breaks
 						subBoardRows[rowNo] = subBoardRow + (1 << uint(numSubBoardsInSubBoardRow-1-n))
 						break
@@ -85,9 +87,9 @@ func (b *BitBoard) UpdateSubBoardWins() {
 		}
 	}
 	// update the subboardrows on each row
-	b.zeroth = subBoardRows[0]
-	b.first = subBoardRows[1]
-	b.second = subBoardRows[2]
+	b.Zeroth = subBoardRows[0]
+	b.First = subBoardRows[1]
+	b.Second = subBoardRows[2]
 }
 
 // Win checks if the bitboard is won
@@ -97,9 +99,9 @@ func (b *BitBoard) Win() bool {
 
 	// generate bigBoard - as if each subboard was a square
 	var bigBoard uint32
-	bigBoard += (7 & b.zeroth) << 6
-	bigBoard += (7 & b.first) << 3
-	bigBoard += 7 & b.second
+	bigBoard += (7 & b.Zeroth) << 6
+	bigBoard += (7 & b.First) << 3
+	bigBoard += 7 & b.Second
 	bigBoard <<= 23
 
 	// check win on bigBoard
@@ -117,39 +119,39 @@ func (b *BitBoard) SubBoardWin(sb SubBoard) bool {
 	b.UpdateSubBoardWins()
 	switch sb {
 	case SubBoard0:
-		if b.zeroth&(1<<2) != 0 {
+		if b.Zeroth&(1<<2) != 0 {
 			return true
 		}
 	case SubBoard1:
-		if b.zeroth&(1<<1) != 0 {
+		if b.Zeroth&(1<<1) != 0 {
 			return true
 		}
 	case SubBoard2:
-		if b.zeroth&(1<<0) != 0 {
+		if b.Zeroth&(1<<0) != 0 {
 			return true
 		}
 	case SubBoard3:
-		if b.first&(1<<2) != 0 {
+		if b.First&(1<<2) != 0 {
 			return true
 		}
 	case SubBoard4:
-		if b.first&(1<<1) != 0 {
+		if b.First&(1<<1) != 0 {
 			return true
 		}
 	case SubBoard5:
-		if b.first&(1<<0) != 0 {
+		if b.First&(1<<0) != 0 {
 			return true
 		}
 	case SubBoard6:
-		if b.second&(1<<2) != 0 {
+		if b.Second&(1<<2) != 0 {
 			return true
 		}
 	case SubBoard7:
-		if b.second&(1<<1) != 0 {
+		if b.Second&(1<<1) != 0 {
 			return true
 		}
 	case SubBoard8:
-		if b.second&(1<<0) != 0 {
+		if b.Second&(1<<0) != 0 {
 			return true
 		}
 	}
@@ -158,9 +160,9 @@ func (b *BitBoard) SubBoardWin(sb SubBoard) bool {
 
 // PrintRowsAsBits prints a bit representation of the various rows to stdout
 func (b *BitBoard) PrintRowsAsBits() {
-	fmt.Printf("%032b\n", b.zeroth)
-	fmt.Printf("%032b\n", b.first)
-	fmt.Printf("%032b\n", b.second)
+	fmt.Printf("%032b\n", b.Zeroth)
+	fmt.Printf("%032b\n", b.First)
+	fmt.Printf("%032b\n", b.Second)
 }
 
 // Move makes a move on the board, i.e. sets the bit corresponding to sq to 1;
@@ -173,13 +175,13 @@ func (b *BitBoard) Move(sq Square) bool {
 	}
 	switch sbrow {
 	case 0:
-		b.zeroth ^= 1 << uint(31-sqint)
+		b.Zeroth ^= 1 << uint(31-sqint)
 		return true
 	case 1:
-		b.first ^= 1 << uint(31-(sqint%numSquaresInSubBoardRow))
+		b.First ^= 1 << uint(31-(sqint%numSquaresInSubBoardRow))
 		return true
 	case 2:
-		b.second ^= 1 << uint(31-(sqint%numSquaresInSubBoardRow))
+		b.Second ^= 1 << uint(31-(sqint%numSquaresInSubBoardRow))
 		return true
 	}
 	return false // unreachable code xD
@@ -191,15 +193,15 @@ func (b *BitBoard) Occupied(sq Square) bool {
 	sbrow := sqint / numSquaresInSubBoardRow
 	switch sbrow {
 	case 0:
-		if b.zeroth&(1<<uint(31-sqint)) != 0 {
+		if b.Zeroth&(1<<uint(31-sqint)) != 0 {
 			return true
 		}
 	case 1:
-		if b.first&(1<<uint(31-(sqint%numSquaresInSubBoardRow))) != 0 {
+		if b.First&(1<<uint(31-(sqint%numSquaresInSubBoardRow))) != 0 {
 			return true
 		}
 	case 2:
-		if b.second&(1<<uint(31-(sqint%numSquaresInSubBoardRow))) != 0 {
+		if b.Second&(1<<uint(31-(sqint%numSquaresInSubBoardRow))) != 0 {
 			return true
 		}
 	}
@@ -230,6 +232,8 @@ func (b *BitBoard) Display() {
 	b.funcDisplay(b.OccupiedChar)
 }
 
+// funcDisplay takes a function, applies that to each square,
+// and prints the output of that function in the corresponding square on the board.
 func (b *BitBoard) funcDisplay(f func(Square) string) {
 
 	fmt.Printf(

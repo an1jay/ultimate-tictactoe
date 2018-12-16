@@ -1,4 +1,4 @@
-package main
+package game
 
 import "fmt"
 
@@ -47,6 +47,14 @@ func (sq Square) SubBoard() SubBoard {
 		return SubBoard8
 	}
 	return NoSubBoard
+}
+
+// NewSquare constructs a square from subboard (b) and subsquare (s)
+func NewSquare(b, s uint) Square {
+	if b >= 0 && b < 9 && s >= 0 && s < 9 {
+		return Square(b*uint(numSquaresInSubBoard) + s)
+	}
+	panic(fmt.Sprintf("Invalid values for subboard (%d) and square (%d", b, s))
 }
 
 // Enumerating through the Squares on the board.
