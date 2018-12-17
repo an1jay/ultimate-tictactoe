@@ -7,7 +7,7 @@ import (
 	"github.com/an1jay/ultimate-tictactoe/game"
 )
 
-// A Player play the game.
+// A Player plays the game.
 // If an object has a Move method - it is a player
 type Player interface {
 	ChooseMove(game.Position) game.Square

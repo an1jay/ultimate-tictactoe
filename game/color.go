@@ -31,3 +31,14 @@ func (c Color) String() string {
 	}
 	return "NoColor"
 }
+
+// EvaluationCoefficient return 1 for White, -1 for Black, 0 for NoColor
+func (c Color) EvaluationCoefficient() float32 {
+	switch c {
+	case White:
+		return 1
+	case Black:
+		return -1
+	}
+	return 0
+}

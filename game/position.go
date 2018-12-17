@@ -27,10 +27,6 @@ func (p *Position) GameOver() (bool, Color) {
 // LegalMoves returns a slice of all possible moves for the side to move
 func (p *Position) LegalMoves() []Square {
 	if p.SubBoardToPlayOnNext != NoSubBoard {
-		sbo, _ := p.SubBoardOver(p.SubBoardToPlayOnNext)
-		if sbo {
-			panic("LegalMoves: sub board to play on next is full")
-		}
 		return p.UnoccupiedSubBoardSquares(p.SubBoardToPlayOnNext)
 	}
 
@@ -42,6 +38,36 @@ func (p *Position) LegalMoves() []Square {
 	}
 
 	return lm
+}
+
+// CountLegalMoves returns number of legal moves
+func (p *Position) CountLegalMoves() uint8 {
+	if p.SubBoardToPlayOnNext != NoSubBoard {
+		return p.CountUnoccupiedSubBoardSquares(p.SubBoardToPlayOnNext)
+	}
+
+	var clm uint8
+	for _, sb := range p.NotOverSubBoards() {
+		clm += p.CountUnoccupiedSubBoardSquares(sb)
+	}
+
+	return clm
+}
+
+// IsMoveLegal returns a bool of whether a square is legal or not
+func (p *Position) IsMoveLegal(sq Square) bool {
+	if p.SubBoardToPlayOnNext != NoSubBoard {
+		if !(p.WhiteBB.Occupied(sq) || p.BlackBB.Occupied(sq)) && (sq.SubBoard() == p.SubBoardToPlayOnNext) {
+			return true
+		}
+		return false
+	}
+	subbo, _ := p.SubBoardOver(sq.SubBoard())
+	if !(p.WhiteBB.Occupied(sq) || p.BlackBB.Occupied(sq)) && !subbo {
+		return true
+	}
+	return false
+
 }
 
 // SubBoardOver returns true and Color of victor if SubBoard is over, else returns false
@@ -67,6 +93,17 @@ func (p *Position) UnoccupiedSubBoardSquares(sb SubBoard) []Square {
 		}
 	}
 	return usbs
+}
+
+// CountUnoccupiedSubBoardSquares returns number of unoccupied squares in a subboard
+func (p *Position) CountUnoccupiedSubBoardSquares(sb SubBoard) uint8 {
+	var cusbs uint8
+	for _, sq := range sb.Squares() {
+		if !(p.WhiteBB.Occupied(sq) || p.BlackBB.Occupied(sq)) {
+			cusbs++
+		}
+	}
+	return cusbs
 }
 
 // NotOverSubBoards returns a list of subboards that are not over
@@ -101,11 +138,11 @@ func (p *Position) Move(sq Square, c Color) bool {
 		return false
 	}
 
-	// make slice of legal moves
-	lm := p.LegalMoves()
+	// // make slice of legal moves
+	// lm := p.LegalMoves()
 
 	// if move is legal
-	if sqInSlice(sq, lm) {
+	if p.IsMoveLegal(sq) {
 		switch c {
 		case White:
 			rv = p.WhiteBB.Move(sq)
@@ -123,6 +160,16 @@ func (p *Position) Move(sq Square, c Color) bool {
 		p.SideToMove = p.SideToMove.Other()
 	}
 	return rv
+}
+
+// Copy returns a pointer to a copy of the position
+func (p *Position) Copy() *Position {
+	return &Position{
+		WhiteBB:              p.WhiteBB,
+		BlackBB:              p.BlackBB,
+		SideToMove:           p.SideToMove,
+		SubBoardToPlayOnNext: p.SubBoardToPlayOnNext,
+	}
 }
 
 // String returns a string representation of the board, suitable for printing.

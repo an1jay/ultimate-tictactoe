@@ -5,13 +5,17 @@ import (
 	"strconv"
 
 	"github.com/an1jay/ultimate-tictactoe/game"
-	player "github.com/an1jay/ultimate-tictactoe/players"
+	players "github.com/an1jay/ultimate-tictactoe/players"
 )
 
 func main() {
-	p1 := player.HumanPlayer{}
-	p2 := player.HumanPlayer{}
+	p1 := players.HumanPlayer{}
+	p2 := players.MinimaxPlayer{
+		Ev:       players.FirstEvaluator{},
+		MaxDepth: 5,
+	}
 	fmt.Println(PlayGame(&p1, &p2, true))
+
 }
 
 func strSquare(a game.Square) string {
