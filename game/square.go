@@ -49,6 +49,12 @@ func (sq Square) SubBoard() SubBoard {
 	return NoSubBoard
 }
 
+// SubSquareSubBoard returns the corresponding SubBoard to SubSquare that the square is on
+func (sq Square) SubSquareSubBoard() SubBoard {
+	sqint := int(sq)
+	return SubBoard(sqint%numSquaresInSubBoard + 1)
+}
+
 // NewSquare constructs a square from subboard (b) and subsquare (s)
 func NewSquare(b, s int) Square {
 	if b >= 0 && b < 9 && s >= 0 && s < 9 {

@@ -11,7 +11,7 @@ import (
 func main() {
 	p1 := player.HumanPlayer{}
 	p2 := player.HumanPlayer{}
-	PlayGame(&p1, &p2, true)
+	fmt.Println(PlayGame(&p1, &p2, true))
 }
 
 func strSquare(a game.Square) string {

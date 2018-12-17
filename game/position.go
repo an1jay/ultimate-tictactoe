@@ -81,37 +81,48 @@ func (p *Position) NotOverSubBoards() []SubBoard {
 	return nosb
 }
 
+//
+
+func sqInSlice(sq Square, sqs []Square) bool {
+	for _, square := range sqs {
+		if square == sq {
+			return true
+		}
+	}
+	return false
+}
+
 // Move makes a move on the board, i.e. makes move on c's bitboard
 // returns true if valid move, returns false if invalid (does not make invalid move).
 func (p *Position) Move(sq Square, c Color) bool {
-
+	rv := false
 	// if wrong side tries to move - error
 	if c != p.SideToMove || c == NoColor {
 		return false
 	}
 
-	// flip who is to move next
-	p.SideToMove = p.SideToMove.Other()
-	sb := sq.SubBoard()
-	if sb != NoSubBoard {
-		so, _ := p.SubBoardOver(sb)
+	// make slice of legal moves
+	lm := p.LegalMoves()
+
+	// if move is legal
+	if sqInSlice(sq, lm) {
+		switch c {
+		case White:
+			rv = p.WhiteBB.Move(sq)
+		case Black:
+			rv = p.BlackBB.Move(sq)
+		}
+		// update subboards
+		sssb := sq.SubSquareSubBoard()
+		so, _ := p.SubBoardOver(sssb)
 		if so {
 			p.SubBoardToPlayOnNext = NoSubBoard
 		} else {
-			p.SubBoardToPlayOnNext = sb
+			p.SubBoardToPlayOnNext = sssb
 		}
-	} else {
-		panic("Position -> Move: a square has NoSubBoard as SubBoard")
+		p.SideToMove = p.SideToMove.Other()
 	}
-
-	// make move
-	switch c {
-	case White:
-		return p.WhiteBB.Move(sq)
-	case Black:
-		return p.BlackBB.Move(sq)
-	}
-	return false // unreachable code xD
+	return rv
 }
 
 // String returns a string representation of the board, suitable for printing.

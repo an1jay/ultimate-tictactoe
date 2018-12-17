@@ -41,11 +41,6 @@ func (sb SubBoard) String() string {
 	return "No SubBoard"
 }
 
-func (sb SubBoard) SubSquareSubBoard() SubBoard {
-	sbint := int(sb)
-	return SubBoard()
-}
-
 // Squares returns a slice of all squares in SubBoard
 func (sb SubBoard) Squares() []Square {
 

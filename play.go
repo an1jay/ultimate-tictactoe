@@ -39,33 +39,31 @@ func PlayGame(white, black Player, verbose bool) map[game.Color]game.Result {
 		toMove := pos.SideToMove
 
 		// depending on whose move, get move
-		switch toMove {
-		case game.White:
-			fmt.Println("White Playing")
+		if toMove == game.White {
 			PrintIf(verbose, pos.String())
 			mW := white.ChooseMove(pos)
 			// illegal move loses
 			if !pos.Move(mW, game.White) {
 				res[game.White] = game.Loss
 				res[game.Black] = game.Win
+				fmt.Println("Illegal White  Move")
 				break
 			}
 			pos.Move(mW, game.White)
 			PrintIf(verbose, fmt.Sprintf("White plays %s", mW.String()))
-		case game.Black:
-			fmt.Println("Black Playing")
+		} else if toMove == game.Black {
 			PrintIf(verbose, pos.String())
 			mB := black.ChooseMove(pos)
 			// llegal move loses
 			if !pos.Move(mB, game.Black) {
 				res[game.White] = game.Win
 				res[game.Black] = game.Loss
+				fmt.Println("Illegal Black Move")
 				break
 			}
 			pos.Move(mB, game.Black)
 			PrintIf(verbose, fmt.Sprintf("Black plays %s", mB.String()))
 		}
-		fmt.Println("Outside Switch")
 		//check gameover
 		igo, winner := pos.GameOver()
 		if igo {
@@ -84,5 +82,7 @@ func PlayGame(white, black Player, verbose bool) map[game.Color]game.Result {
 		}
 
 	}
+	PrintIf(verbose, "Final Position")
+	PrintIf(verbose, pos.String())
 	return res
 }

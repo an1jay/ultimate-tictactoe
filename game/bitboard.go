@@ -106,7 +106,7 @@ func (b *BitBoard) Win() bool {
 
 	// check win on bigBoard
 	for _, wc := range WinConditions {
-		if bigBoard&wc != 0 {
+		if bits.OnesCount32(bigBoard&wc) == 3 {
 			return true
 		}
 	}
@@ -170,9 +170,12 @@ func (b *BitBoard) PrintRowsAsBits() {
 func (b *BitBoard) Move(sq Square) bool {
 	sqint := int(sq)
 	sbrow := sqint / numSquaresInSubBoardRow
+
+	// should be checking legalmoves before calling bitboard.move - may comment out in future
 	if b.Occupied(sq) {
 		return false
 	}
+
 	switch sbrow {
 	case 0:
 		b.Zeroth ^= 1 << uint(31-sqint)
