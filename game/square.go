@@ -50,9 +50,9 @@ func (sq Square) SubBoard() SubBoard {
 }
 
 // NewSquare constructs a square from subboard (b) and subsquare (s)
-func NewSquare(b, s uint) Square {
+func NewSquare(b, s int) Square {
 	if b >= 0 && b < 9 && s >= 0 && s < 9 {
-		return Square(b*uint(numSquaresInSubBoard) + s)
+		return Square(b*numSquaresInSubBoard + s)
 	}
 	panic(fmt.Sprintf("Invalid values for subboard (%d) and square (%d", b, s))
 }

@@ -84,9 +84,27 @@ func (p *Position) NotOverSubBoards() []SubBoard {
 // Move makes a move on the board, i.e. makes move on c's bitboard
 // returns true if valid move, returns false if invalid (does not make invalid move).
 func (p *Position) Move(sq Square, c Color) bool {
+
+	// if wrong side tries to move - error
 	if c != p.SideToMove || c == NoColor {
 		return false
 	}
+
+	// flip who is to move next
+	p.SideToMove = p.SideToMove.Other()
+	sb := sq.SubBoard()
+	if sb != NoSubBoard {
+		so, _ := p.SubBoardOver(sb)
+		if so {
+			p.SubBoardToPlayOnNext = NoSubBoard
+		} else {
+			p.SubBoardToPlayOnNext = sb
+		}
+	} else {
+		panic("Position -> Move: a square has NoSubBoard as SubBoard")
+	}
+
+	// make move
 	switch c {
 	case White:
 		return p.WhiteBB.Move(sq)

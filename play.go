@@ -10,7 +10,7 @@ import (
 // A Player play the game.
 // If an object has a Move method - it is a player
 type Player interface {
-	Move(game.Position) game.Square
+	ChooseMove(game.Position) game.Square
 }
 
 // PrintIf prints str using fmt.Println() if b is true.
@@ -34,23 +34,38 @@ func PlayGame(white, black Player, verbose bool) map[game.Color]game.Result {
 
 	// main game loop
 	for true {
-		time.Sleep(1 * time.Second) // Leave in so doesn't crash
+		time.Sleep(200 * time.Millisecond) // Leave in so doesn't crash
+
+		toMove := pos.SideToMove
 
 		// depending on whose move, get move
-		switch pos.SideToMove {
+		switch toMove {
 		case game.White:
+			fmt.Println("White Playing")
 			PrintIf(verbose, pos.String())
-			m := white.Move(pos)
-			PrintIf(verbose, fmt.Sprintf("%s plays %s", pos.SideToMove.String(), m.String()))
+			mW := white.ChooseMove(pos)
+			// illegal move loses
+			if !pos.Move(mW, game.White) {
+				res[game.White] = game.Loss
+				res[game.Black] = game.Win
+				break
+			}
+			pos.Move(mW, game.White)
+			PrintIf(verbose, fmt.Sprintf("White plays %s", mW.String()))
 		case game.Black:
+			fmt.Println("Black Playing")
 			PrintIf(verbose, pos.String())
-			m := black.Move(pos)
-			PrintIf(verbose, fmt.Sprintf("%s plays %s", pos.SideToMove.String(), m.String()))
+			mB := black.ChooseMove(pos)
+			// llegal move loses
+			if !pos.Move(mB, game.Black) {
+				res[game.White] = game.Win
+				res[game.Black] = game.Loss
+				break
+			}
+			pos.Move(mB, game.Black)
+			PrintIf(verbose, fmt.Sprintf("Black plays %s", mB.String()))
 		}
-
-		// set move to other side
-		pos.SideToMove = pos.SideToMove.Other()
-
+		fmt.Println("Outside Switch")
 		//check gameover
 		igo, winner := pos.GameOver()
 		if igo {
