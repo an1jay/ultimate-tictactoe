@@ -19,3 +19,14 @@ func (r Result) String() string {
 	}
 	return "Tie"
 }
+
+// Other returns opposite result
+func (r Result) Other() Result {
+	switch r {
+	case Win:
+		return Loss
+	case Loss:
+		return Win
+	}
+	return Tie
+}

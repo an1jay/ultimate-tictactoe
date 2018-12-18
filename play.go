@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/an1jay/ultimate-tictactoe/game"
 )
@@ -42,7 +41,7 @@ func (g *Game) PlayGame(white, black Player, verbose bool) map[game.Color]game.R
 
 	// main game loop
 	for true {
-		time.Sleep(200 * time.Millisecond) // Leave in so doesn't crash
+		// time.Sleep(200 * time.Millisecond) // Leave in so doesn't crash
 
 		toMove := pos.SideToMove
 

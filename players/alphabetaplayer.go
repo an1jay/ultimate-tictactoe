@@ -8,28 +8,31 @@ import (
 	"github.com/an1jay/ultimate-tictactoe/players/evaluators"
 )
 
-// MinimaxPlayer plays UTTT randomly
-type MinimaxPlayer struct {
+// AlphaBetaPlayer plays UTTT using minimax and alpha beta pruning
+type AlphaBetaPlayer struct {
 	Ev        evaluators.Evaluator
 	MaxDepth  uint8
 	nodeCount uint64
 }
 
-// ChooseMove asks a random player to move randomly from choice of legal moves.
-func (m *MinimaxPlayer) ChooseMove(pos game.Position) game.Square {
+// ChooseMove asks a AlphaBetaPlayer to play using minimax and alpha beta pruning
+func (a *AlphaBetaPlayer) ChooseMove(pos game.Position) game.Square {
 
-	fmt.Println("Minimax Player thinks ...")
-	m.nodeCount = 0
+	fmt.Println("AlphaBeta Player thinks ...")
+	a.nodeCount = 0
 	t0 := time.Now()
 	bestScore := pos.SideToMove.Other().EvaluationWin() // -1 for white, 1 for black
 	var bestMove game.Square
+
+	alpha := -DefaultVal
+	beta := DefaultVal
 
 	switch pos.SideToMove {
 	case game.White:
 		for _, lgm := range pos.LegalMoves() {
 			newPos := pos.Copy()
 			newPos.Move(lgm, game.White)
-			scr := m.Minimax(m.MaxDepth, game.White, newPos)
+			scr := a.AlphaBeta(a.MaxDepth, game.White, alpha, beta, newPos)
 			if scr == game.White.EvaluationWin() {
 				return lgm
 			}
@@ -42,7 +45,7 @@ func (m *MinimaxPlayer) ChooseMove(pos game.Position) game.Square {
 		for _, lgm := range pos.LegalMoves() {
 			newPos := pos.Copy()
 			newPos.Move(lgm, game.Black)
-			scr := m.Minimax(m.MaxDepth, game.Black, newPos)
+			scr := a.AlphaBeta(a.MaxDepth, game.Black, alpha, beta, newPos)
 			if scr == game.Black.EvaluationWin() {
 				return lgm
 			}
@@ -53,22 +56,19 @@ func (m *MinimaxPlayer) ChooseMove(pos game.Position) game.Square {
 		}
 	}
 	dt := time.Since(t0).Seconds()
-	fmt.Printf("Minimax Player explore %d nodes in %.02f seconds at %.02f nodes/s \n", m.nodeCount, dt, float64(m.nodeCount)/dt)
+	fmt.Printf("AlphaBeta Player explore %d nodes in %.02f seconds at %.02f nodes/s \n", a.nodeCount, dt, float64(a.nodeCount)/dt)
 	return bestMove
 }
 
-// DefaultVal is larger than maximum possible evaluation
-const DefaultVal float32 = 1000
+// AlphaBeta returns a minimax score for a given evaluator and position using alpha beta pruning
+func (a *AlphaBetaPlayer) AlphaBeta(depth uint8, side game.Color, alpha float32, beta float32, pos *game.Position) float32 {
 
-// Minimax returns a minimax score for a given evaluator and position
-func (m *MinimaxPlayer) Minimax(depth uint8, side game.Color, pos *game.Position) float32 {
-
-	m.nodeCount++
+	a.nodeCount++
 
 	// if at a terminal node, evaluate
 	igo, _ := pos.GameOver()
 	if igo || depth == 0 {
-		return m.Ev.Evaluate(pos)
+		return a.Ev.Evaluate(pos)
 	}
 
 	value := DefaultVal
@@ -80,29 +80,23 @@ func (m *MinimaxPlayer) Minimax(depth uint8, side game.Color, pos *game.Position
 		for _, lgm := range pos.LegalMoves() {
 			newPos := pos.Copy()
 			newPos.Move(lgm, game.White)
-			value = max(value, m.Minimax(depth-1, game.Black, newPos))
+			value = max(value, a.AlphaBeta(depth-1, game.Black, alpha, beta, newPos))
+			alpha = max(alpha, value)
+			if alpha >= beta {
+				break
+			}
 		}
 	case game.Black:
 		value *= 1
 		for _, lgm := range pos.LegalMoves() {
 			newPos := pos.Copy()
 			newPos.Move(lgm, game.Black)
-			value = min(value, m.Minimax(depth-1, game.White, newPos))
+			value = min(value, a.AlphaBeta(depth-1, game.White, alpha, beta, newPos))
+			beta = min(beta, value)
+			if alpha >= beta {
+				break
+			}
 		}
 	}
 	return value
-}
-
-func max(x, y float32) float32 {
-	if x > y {
-		return x
-	}
-	return y
-}
-
-func min(x, y float32) float32 {
-	if x < y {
-		return x
-	}
-	return y
 }

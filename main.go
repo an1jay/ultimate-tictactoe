@@ -5,18 +5,58 @@ import (
 	"strconv"
 
 	"github.com/an1jay/ultimate-tictactoe/game"
-	players "github.com/an1jay/ultimate-tictactoe/players"
+	"github.com/an1jay/ultimate-tictactoe/players"
 )
 
 func main() {
-	p1 := players.HumanPlayer{}
-	p2 := players.MinimaxPlayer{
-		Ev:       players.FirstEvaluator{},
-		MaxDepth: 4,
-	}
+	// p1 := players.AlphaBetaPlayer{
+	// 	Ev:       evaluators.BigBoardMSE{},
+	// 	MaxDepth: 6,
+	// }
+	// p2 := players.AlphaBetaPlayer{
+	// 	Ev:       evaluators.MaxSubBoardsWon{},
+	// 	MaxDepth: 6,
+	// }
+	// fmt.Printf("Move List: \n %v", g.moveHistory)
+
+	p1 := players.RandomPlayer{}
+	p2 := players.RandomPlayer{}
+	fmt.Println(playMatch(&p1, &p2, 10000))
+	// g := Game{}
+	// fmt.Println(g.PlayGame(&p1, &p2, true))
+	// fmt.Println(g.PlayGame(&p1, &p2, true))
+
+}
+
+func playMatch(p1, p2 Player, numGames uint32) []map[game.Result]uint32 {
+	fmt.Println("Playing a match")
 	g := Game{}
-	fmt.Println(g.PlayGame(&p1, &p2, true))
-	fmt.Printf("Move List: \n %v", g.moveHistory)
+	resultsp1 := map[game.Result]uint32{}
+	resultsp2 := map[game.Result]uint32{}
+	for i := 0; i < int(numGames/2); i++ {
+		// fmt.Println("Playing a game")
+		switch g.PlayGame(p1, p2, false)[game.White] {
+		case game.Win:
+			resultsp1[game.Win]++
+		case game.Loss:
+			resultsp1[game.Loss]++
+		case game.Tie:
+			resultsp1[game.Tie]++
+		}
+	}
+	for i := 0; i < int(numGames/2); i++ {
+		// fmt.Println("Playing a game")
+		switch g.PlayGame(p2, p1, false)[game.White] {
+		case game.Win:
+			resultsp2[game.Win.Other()]++
+		case game.Loss:
+			resultsp2[game.Loss.Other()]++
+		case game.Tie:
+			resultsp2[game.Tie]++
+		}
+	}
+	results := []map[game.Result]uint32{resultsp1, resultsp2}
+	return results
 
 }
 

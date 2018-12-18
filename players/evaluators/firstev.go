@@ -1,29 +1,10 @@
-package players
+package evaluators
 
 import (
 	"math/bits"
 
 	"github.com/an1jay/ultimate-tictactoe/game"
 )
-
-// Evaluator evaluates a position and returns a score depending on how favourable the position is
-// -1 is best for black, 1 is best for white
-type Evaluator interface {
-	Evaluate(p *game.Position) float32
-}
-
-// MaxLegalMoveEvaluator is not very useful...
-type MaxLegalMoveEvaluator struct{}
-
-// Evaluate evaluates a position and returns a score depending on how favourable the position is
-func (m MaxLegalMoveEvaluator) Evaluate(pos *game.Position) float32 {
-	igo, winner := pos.GameOver()
-	if igo {
-		return winner.EvaluationWin()
-	}
-	value := float32(pos.CountLegalMoves()) / 500
-	return pos.SideToMove.EvaluationCoefficient() * value
-}
 
 // FirstEvaluator evaluates a position
 type FirstEvaluator struct{}
@@ -76,6 +57,6 @@ func (b FirstEvaluator) Evaluate(pos *game.Position) float32 {
 	// number of won subboards
 	nwbbSMO := float32(bits.OnesCount32(bbSMO)) / 9
 
-	value := .0002*nlm + (-0.08)*(fMseSM-fMseSMO) + 0.04*(nwbbSM-nwbbSMO)
+	value := .00002*nlm + (-0.08)*(fMseSM-fMseSMO) + 0.04*(nwbbSM-nwbbSMO)
 	return pos.SideToMove.EvaluationCoefficient() * value
 }
