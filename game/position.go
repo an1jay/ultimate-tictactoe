@@ -118,9 +118,8 @@ func (p *Position) NotOverSubBoards() []SubBoard {
 	return nosb
 }
 
-//
-
-func sqInSlice(sq Square, sqs []Square) bool {
+// SqInSlice checks whether Square is in a Square slice
+func SqInSlice(sq Square, sqs []Square) bool {
 	for _, square := range sqs {
 		if square == sq {
 			return true
@@ -160,6 +159,17 @@ func (p *Position) Move(sq Square, c Color) bool {
 		p.SideToMove = p.SideToMove.Other()
 	}
 	return rv
+}
+
+// BigBoard returns a 3x3 board of the subboards for the specific Color
+func (p *Position) BigBoard(c Color) uint32 {
+	switch c {
+	case White:
+		return p.WhiteBB.BigBoard()
+	case Black:
+		return p.BlackBB.BigBoard()
+	}
+	return 0
 }
 
 // Copy returns a pointer to a copy of the position

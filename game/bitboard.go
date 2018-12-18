@@ -113,6 +113,21 @@ func (b *BitBoard) Win() bool {
 	return false
 }
 
+// BigBoard returns a 3x3 board of the subboards
+func (b *BitBoard) BigBoard() uint32 {
+	// update subboard wins
+	b.UpdateSubBoardWins()
+
+	// generate bigBoard - as if each subboard was a square
+	var bigBoard uint32
+	bigBoard += (7 & b.Zeroth) << 6
+	bigBoard += (7 & b.First) << 3
+	bigBoard += 7 & b.Second
+	bigBoard <<= 23
+
+	return bigBoard
+}
+
 // SubBoardWin returns bool for whether the SubBoard is won or not.
 // NoSubBoard always returns false
 func (b *BitBoard) SubBoardWin(sb SubBoard) bool {

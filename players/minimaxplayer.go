@@ -20,7 +20,7 @@ func (m *MinimaxPlayer) ChooseMove(pos game.Position) game.Square {
 	fmt.Println("Minimax Player thinks ...")
 	m.nodeCount = 0
 	t0 := time.Now()
-	bestScore := pos.SideToMove.Other().EvaluationCoefficient() //-1 for white, 1 for black
+	bestScore := pos.SideToMove.Other().EvaluationWin() // -1 for white, 1 for black
 	var bestMove game.Square
 
 	switch pos.SideToMove {
@@ -29,7 +29,7 @@ func (m *MinimaxPlayer) ChooseMove(pos game.Position) game.Square {
 			newPos := pos.Copy()
 			newPos.Move(lgm, game.White)
 			scr := m.Minimax(m.MaxDepth, game.White, newPos)
-			if scr == game.White.EvaluationCoefficient() {
+			if scr == game.White.EvaluationWin() {
 				return lgm
 			}
 			if scr >= bestScore {
@@ -42,7 +42,7 @@ func (m *MinimaxPlayer) ChooseMove(pos game.Position) game.Square {
 			newPos := pos.Copy()
 			newPos.Move(lgm, game.Black)
 			scr := m.Minimax(m.MaxDepth, game.Black, newPos)
-			if scr == game.Black.EvaluationCoefficient() {
+			if scr == game.Black.EvaluationWin() {
 				return lgm
 			}
 			if scr <= bestScore {
@@ -72,7 +72,7 @@ func (m *MinimaxPlayer) Minimax(depth uint8, side game.Color, pos *game.Position
 
 	value := DefaultVal
 
-	//recursively find Minimax value of a position
+	// recursively find Minimax value of a position
 	switch side {
 	case game.White:
 		value *= -1

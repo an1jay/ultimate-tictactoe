@@ -12,9 +12,11 @@ func main() {
 	p1 := players.HumanPlayer{}
 	p2 := players.MinimaxPlayer{
 		Ev:       players.FirstEvaluator{},
-		MaxDepth: 5,
+		MaxDepth: 4,
 	}
-	fmt.Println(PlayGame(&p1, &p2, true))
+	g := Game{}
+	fmt.Println(g.PlayGame(&p1, &p2, true))
+	fmt.Printf("Move List: \n %v", g.moveHistory)
 
 }
 

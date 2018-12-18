@@ -12,13 +12,17 @@ type HumanPlayer struct{}
 // ChooseMove asks a human player to move through stdout/stdin.
 func (h *HumanPlayer) ChooseMove(pos game.Position) game.Square {
 	var b, s int = -1, -1
-	fmt.Println("Enter Move: (B0S0 - B8S8)")
+	var sq game.Square
+	fmt.Printf("Enter one of these: %v\n", pos.LegalMoves())
 	for true {
 		fmt.Scanf("B%dS%d", &b, &s)
 		if b >= 0 && b < 9 && s >= 0 && s < 9 {
-			break
+			sq = game.NewSquare(b, s)
+			if game.SqInSlice(sq, pos.LegalMoves()) {
+				break
+			}
 		}
 		fmt.Println("Try Again")
 	}
-	return game.NewSquare(b, s)
+	return sq
 }

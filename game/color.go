@@ -42,3 +42,14 @@ func (c Color) EvaluationCoefficient() float32 {
 	}
 	return 0
 }
+
+// EvaluationWin return 1 for White, -1 for Black, 0 for NoColor
+func (c Color) EvaluationWin() float32 {
+	switch c {
+	case White:
+		return 10
+	case Black:
+		return -10
+	}
+	return 0
+}
