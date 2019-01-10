@@ -6,25 +6,25 @@ import (
 
 	"github.com/an1jay/ultimate-tictactoe/game"
 	"github.com/an1jay/ultimate-tictactoe/players"
+	"github.com/an1jay/ultimate-tictactoe/players/evaluators"
 )
 
 func main() {
-	// p1 := players.AlphaBetaPlayer{
-	// 	Ev:       evaluators.BigBoardMSE{},
-	// 	MaxDepth: 6,
-	// }
-	// p2 := players.AlphaBetaPlayer{
-	// 	Ev:       evaluators.MaxSubBoardsWon{},
-	// 	MaxDepth: 6,
-	// }
-	// fmt.Printf("Move List: \n %v", g.moveHistory)
+	p1 := players.AlphaBetaPlayer{
+		Ev:       evaluators.BigBoardMSE{},
+		MaxDepth: 10,
+	}
+	p2 := players.AlphaBetaPlayer{
+		Ev:       evaluators.BigBoardMSE{},
+		MaxDepth: 10,
+	}
 
-	p1 := players.RandomPlayer{}
-	p2 := players.RandomPlayer{}
-	fmt.Println(playMatch(&p1, &p2, 10000))
-	// g := Game{}
-	// fmt.Println(g.PlayGame(&p1, &p2, true))
-	// fmt.Println(g.PlayGame(&p1, &p2, true))
+	// p1 := players.RandomPlayer{}
+	// p2 := players.RandomPlayer{}
+	// fmt.Println(playMatch(&p1, &p2, 10000))
+	g := Game{}
+	fmt.Println(g.PlayGame(&p1, &p2, true))
+	fmt.Printf("Move List: \n %v", g.moveHistory)
 
 }
 

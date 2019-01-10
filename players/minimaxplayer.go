@@ -29,7 +29,7 @@ func (m *MinimaxPlayer) ChooseMove(pos game.Position) game.Square {
 		for _, lgm := range pos.LegalMoves() {
 			newPos := pos.Copy()
 			newPos.Move(lgm, game.White)
-			scr := m.Minimax(m.MaxDepth, game.White, newPos)
+			scr := m.Minimax(m.MaxDepth, game.Black, newPos) // Is Black <TODO> ?
 			if scr == game.White.EvaluationWin() {
 				return lgm
 			}
@@ -42,7 +42,7 @@ func (m *MinimaxPlayer) ChooseMove(pos game.Position) game.Square {
 		for _, lgm := range pos.LegalMoves() {
 			newPos := pos.Copy()
 			newPos.Move(lgm, game.Black)
-			scr := m.Minimax(m.MaxDepth, game.Black, newPos)
+			scr := m.Minimax(m.MaxDepth, game.White, newPos) // Is White <TODO> ?
 			if scr == game.Black.EvaluationWin() {
 				return lgm
 			}
