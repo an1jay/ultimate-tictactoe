@@ -33,9 +33,9 @@ var WinConditions = [8]uint32{
 }
 
 var subboardMasks = [3]uint32{
-	4286578688,
-	8372224,
-	16352,
+	4286578688, // First
+	8372224,    // Second
+	16352,      // Third
 }
 
 // NewBitBoard returns a bitboard given a mapping form Square to Bitboard.
@@ -186,10 +186,10 @@ func (b *BitBoard) Move(sq Square) bool {
 	sqint := int(sq)
 	sbrow := sqint / numSquaresInSubBoardRow
 
-	// should be checking legalmoves before calling bitboard.move - may comment out in future
-	if b.Occupied(sq) {
-		return false
-	}
+	// // should be checking legalmoves before calling bitboard.move - may comment out in future
+	// if b.Occupied(sq) {
+	// 	return false
+	// }
 
 	switch sbrow {
 	case 0:

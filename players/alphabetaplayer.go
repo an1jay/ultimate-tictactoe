@@ -31,7 +31,7 @@ func (a *AlphaBetaPlayer) ChooseMove(pos game.Position) game.Square {
 	case game.White:
 		for _, lgm := range pos.LegalMoves() {
 			newPos := pos.Copy()
-			newPos.Move(lgm, game.White)
+			newPos.UnsafeMove(lgm, game.White)
 			scr := a.AlphaBeta(a.MaxDepth, game.Black, alpha, beta, newPos) // Is Black <TODO> ?
 			if scr == game.White.EvaluationWin() {
 				return lgm
@@ -44,7 +44,7 @@ func (a *AlphaBetaPlayer) ChooseMove(pos game.Position) game.Square {
 	case game.Black:
 		for _, lgm := range pos.LegalMoves() {
 			newPos := pos.Copy()
-			newPos.Move(lgm, game.Black)
+			newPos.UnsafeMove(lgm, game.Black)
 			scr := a.AlphaBeta(a.MaxDepth, game.White, alpha, beta, newPos) // Is White <TODO> ?
 			if scr == game.Black.EvaluationWin() {
 				return lgm

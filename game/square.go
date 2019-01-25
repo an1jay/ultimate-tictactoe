@@ -60,7 +60,7 @@ func NewSquare(b, s int) Square {
 	if b >= 0 && b < 9 && s >= 0 && s < 9 {
 		return Square(b*numSquaresInSubBoard + s)
 	}
-	panic(fmt.Sprintf("Invalid values for subboard (%d) and square (%d", b, s))
+	panic(fmt.Sprintf("Invalid values for subboard (%d) and square (%d)", b, s))
 }
 
 // Enumerating through the Squares on the board.

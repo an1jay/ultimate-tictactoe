@@ -1,5 +1,5 @@
 # ultimate-tictactoe
 
-to do
+## to do
 ** Move in Position
 ** Play Game functionality

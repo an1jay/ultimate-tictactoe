@@ -132,14 +132,10 @@ func SqInSlice(sq Square, sqs []Square) bool {
 // returns true if valid move, returns false if invalid (does not make invalid move).
 func (p *Position) Move(sq Square, c Color) bool {
 	rv := false
-	// if wrong side tries to move - error
+	// if wrong side tries to move - illegal move
 	if c != p.SideToMove || c == NoColor {
 		return false
 	}
-
-	// // make slice of legal moves
-	// lm := p.LegalMoves()
-
 	// if move is legal
 	if p.IsMoveLegal(sq) {
 		switch c {
@@ -159,6 +155,26 @@ func (p *Position) Move(sq Square, c Color) bool {
 		p.SideToMove = p.SideToMove.Other()
 	}
 	return rv
+}
+
+// UnsafeMove makes a move on the board without checking for move legality, i.e. makes move on c's bitboard
+func (p *Position) UnsafeMove(sq Square, c Color) {
+	switch c {
+	case White:
+		_ = p.WhiteBB.Move(sq)
+	case Black:
+		_ = p.BlackBB.Move(sq)
+	}
+	// update subboards
+	sssb := sq.SubSquareSubBoard()
+	so, _ := p.SubBoardOver(sssb)
+	if so {
+		p.SubBoardToPlayOnNext = NoSubBoard
+	} else {
+		p.SubBoardToPlayOnNext = sssb
+	}
+	p.SideToMove = p.SideToMove.Other()
+
 }
 
 // BigBoard returns a 3x3 board of the subboards for the specific Color

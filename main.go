@@ -12,11 +12,11 @@ import (
 func main() {
 	p1 := players.AlphaBetaPlayer{
 		Ev:       evaluators.BigBoardMSE{},
-		MaxDepth: 10,
+		MaxDepth: 8,
 	}
 	p2 := players.AlphaBetaPlayer{
 		Ev:       evaluators.BigBoardMSE{},
-		MaxDepth: 10,
+		MaxDepth: 8,
 	}
 
 	// p1 := players.RandomPlayer{}
